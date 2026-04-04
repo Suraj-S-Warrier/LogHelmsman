@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fault-config-worker
+  namespace: target-system
+data:
+  FAULT_MODE: none

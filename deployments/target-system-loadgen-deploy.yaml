@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: target-system-loadgen-deploy
+  namespace: target-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: target-system-loadgen-deploy
+  template:
+    metadata:
+      name: target-system-loadgen-deploy
+      labels:
+        name: target-system-loadgen-deploy
+    spec:
+      containers:
+        - name: loadgen
+          image: target-loadgen:v1
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: fault-config-loadgen
+              mountPath: /etc/config
+      volumes:
+        - name: fault-config-loadgen
+          configMap:
+            name: fault-config-loadgen

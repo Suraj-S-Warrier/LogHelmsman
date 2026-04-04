@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: target-system-frontend-deploy
+  namespace: target-system
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      name: target-system-frontend-deploy
+  template:
+    metadata:
+      name: target-system-frontend-deploy
+      labels:
+        name: target-system-frontend-deploy
+    spec:
+      containers:
+        - name: frontend
+          image: target-frontend:v1
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: fault-config-frontend
+              mountPath: /etc/config
+      volumes:
+        - name: fault-config-frontend
+          configMap:
+            name: fault-config-frontend

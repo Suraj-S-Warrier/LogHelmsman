@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fault-config-frontend
+  namespace: target-system
+data:
+  FAULT_MODE: none
+  BACKEND_URL: "http://backend:5000"

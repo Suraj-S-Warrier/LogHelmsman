@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fault-config-loadgen
+  namespace: target-system
+data:
+  FAULT_MODE: none
+  FRONTEND_URL: "http://frontend:5000"

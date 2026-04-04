@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: target-system-worker-deploy
+  namespace: target-system
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      name: target-system-worker-deploy
+  template:
+    metadata:
+      name: target-system-worker-deploy
+      labels:
+        name: target-system-worker-deploy
+    spec:
+      containers:
+        - name: worker
+          image: target-worker:v1
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: fault-config-worker
+              mountPath: /etc/config
+      volumes:
+        - name: fault-config-worker
+          configMap:
+            name: fault-config-worker
