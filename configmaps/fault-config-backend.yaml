@@ -4,5 +4,5 @@ metadata:
   name: fault-config-backend
   namespace: target-system
 data:
-  FAULT_MODE: none
+  FAULT_MODE: none # values: none | crash | error_burst | cpu_spike
   WORKER_URL: "http://worker:5000"

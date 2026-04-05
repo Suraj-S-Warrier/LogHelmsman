@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: loadgen
-          image: target-loadgen:v1
+          image: target-loadgen:v2
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: fault-config-loadgen

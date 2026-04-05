@@ -12,3 +12,7 @@ spec:
         - namespaceSelector:
             matchLabels:
               name: monitoring
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: target

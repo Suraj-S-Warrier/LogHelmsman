@@ -4,4 +4,4 @@ metadata:
   name: fault-config-worker
   namespace: target-system
 data:
-  FAULT_MODE: none
+  FAULT_MODE: none # values: none | crash | cpu_spike | memory_leak | error_burst

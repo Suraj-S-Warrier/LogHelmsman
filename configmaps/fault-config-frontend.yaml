@@ -4,5 +4,5 @@ metadata:
   name: fault-config-frontend
   namespace: target-system
 data:
-  FAULT_MODE: none
+  FAULT_MODE: none #modes are none, crash, log_spam, error_burst
   BACKEND_URL: "http://backend:5000"
