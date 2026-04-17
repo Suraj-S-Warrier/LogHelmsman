@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: log-parser
+  namespace: monitoring-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: log-parser
+  template:
+    metadata:
+      labels:
+        app: log-parser
+    spec:
+      serviceAccountName: log-parser
+      containers:
+        - name: log-parser
+          image: log-parser:v1
+          env:
+            - name: KAFKA_BROKER
+              value: "kafka.monitoring-system.svc.cluster.local:9092"
+            - name: INPUT_TOPIC
+              value: "raw-logs"
+            - name: OUTPUT_TOPIC
+              value: "parsed-logs"
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"

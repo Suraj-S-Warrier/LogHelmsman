@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: feature-engineer
+  namespace: monitoring-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: feature-engineer
+  template:
+    metadata:
+      labels:
+        app: feature-engineer
+    spec:
+      serviceAccountName: feature-engineer
+      containers:
+        - name: feature-engineer
+          image: feature-engineer:v1
+          env:
+            - name: KAFKA_BROKER
+              value: "kafka.monitoring-system.svc.cluster.local:9092"
+            - name: INPUT_TOPIC
+              value: "parsed-logs"
+            - name: OUTPUT_TOPIC
+              value: "feature-vectors"
+            - name: WINDOW_SECONDS
+              value: "60"
+            - name: BURN_IN_MODE
+              value: "true"
+            - name: BURN_IN_FILE
+              value: "/data/burn_in.csv"
+            - name: ML_SERVICE_URL
+              value: "http://ml-service:8000/predict"
+          volumeMounts:
+            - name: burn-in-data
+              mountPath: /data
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+      volumes:
+        - name: burn-in-data
+          persistentVolumeClaim:
+            claimName: feature-engineer-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: feature-engineer-pvc
+  namespace: monitoring-system
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 500Mi
