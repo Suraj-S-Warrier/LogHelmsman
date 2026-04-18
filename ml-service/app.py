@@ -82,6 +82,8 @@ def score_to_severity(score: float) -> str:
 def health():
     return {"status": "ok", "features": FEATURES}
 
+ANOMALY_THRESHOLD = -0.05 
+
 @app.post("/predict", response_model=PredictionResult)
 def predict(vector: FeatureVector):
     try:
@@ -90,7 +92,7 @@ def predict(vector: FeatureVector):
         scaled = scaler.transform(values)
 
         score     = float(model.decision_function(scaled)[0])
-        is_anomaly = model.predict(scaled)[0] == -1
+        is_anomaly = score < ANOMALY_THRESHOLD
         severity  = score_to_severity(score)
 
         result = PredictionResult(

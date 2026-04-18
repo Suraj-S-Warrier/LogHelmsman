@@ -106,7 +106,10 @@ def check_cascading_failure(producer):
         recent = [(ts, a) for ts, a in history if ts > cutoff]
         if recent:
             service = recent[-1][1].get("service", "unknown")
+            severity = recent[-1][1].get("severity", "low")
             if service in EXCLUDED_SERVICES:   
+                continue
+            if severity not in ("medium", "high", "critical"):  # ← add this
                 continue
             services_with_alerts.add(service)
             pods_with_alerts.append(pod)

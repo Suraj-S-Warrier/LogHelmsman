@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dashboard
+  namespace: monitoring-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dashboard
+  template:
+    metadata:
+      labels:
+        app: dashboard
+    spec:
+      containers:
+        - name: dashboard
+          image: dashboard:v2
+          tty: true #need this one for having the interactive terminal attaching properly to local one
+          stdin: true
+          env:
+            - name: KAFKA_BROKER
+              value: "kafka.monitoring-system.svc.cluster.local:9092"
+            - name: CORRELATED_TOPIC
+              value: "correlated-alerts"
+            - name: ML_TOPIC
+              value: "alerts"
+            - name: REFRESH_RATE
+              value: "2.0"
+            - name: TZ
+              value: "Asia/Kolkata"
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "128Mi"
+              cpu: "200m"

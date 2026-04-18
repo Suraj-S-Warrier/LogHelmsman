@@ -32,3 +32,6 @@ The "Y I Did What I Did"s of my project:
 Starting the project in minikube with the command:
 minikube start --nodes 3 --cpus 2 --memory 4096 --cni calico   #calico required since we need cni compatible software for NetworkPolicy to work.
 
+applied memory_leak to worker at 15:35
+got the worker pods in anomalous in 15:36
+got memory_leak in 15:37,15:38
