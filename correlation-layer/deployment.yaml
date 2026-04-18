@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: correlation-layer
+  namespace: monitoring-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: correlation-layer
+  template:
+    metadata:
+      labels:
+        app: correlation-layer
+    spec:
+      containers:
+        - name: correlation-layer
+          image: correlation-layer:v1
+          env:
+            - name: KAFKA_BROKER
+              value: "kafka.monitoring-system.svc.cluster.local:9092"
+            - name: INPUT_TOPIC
+              value: "alerts"
+            - name: OUTPUT_TOPIC
+              value: "correlated-alerts"
+            - name: HISTORY_WINDOW
+              value: "300"
+            - name: MIN_ANOMALY_COUNT
+              value: "2"
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "300m"

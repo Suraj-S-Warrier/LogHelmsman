@@ -1,0 +1,36 @@
+failure_classes:
+
+  - name: crashloop_overload
+    severity: critical
+    conditions:
+      - cpu_spike
+      - high_severity
+    description: "Pod crashing under CPU overload"
+
+  - name: memory_leak
+    severity: high
+    conditions:
+      - memory_growth
+      - high_severity
+    description: "Gradual memory growth indicating a leak"
+
+  - name: error_cascade
+    severity: high
+    conditions:
+      - error_spike
+      - high_severity
+    description: "Sustained error rate spike"
+
+  - name: log_flood
+    severity: medium
+    conditions:
+      - log_spike
+      - high_severity
+    description: "Abnormal log volume — possible runaway process"
+
+  - name: resource_pressure
+    severity: medium
+    conditions:
+      - cpu_spike
+      - memory_growth
+    description: "Combined CPU and memory pressure"
