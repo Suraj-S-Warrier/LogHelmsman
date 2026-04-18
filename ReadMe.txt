@@ -17,7 +17,7 @@ What have Been Implemented in the project:
   - Kakfa deployment with persistent volume. Has 3 topics created - raw-logs, parsed-logs,and alerts
   - A Fluent Bit DaemonSet to the pods' metadata and logs to the raw-logs topic of kafka.
   - A log-parser pod and a feature engineer pod to refine the raw-logs and convert it into the required format for our csv file.
-  - An Isolation Forest model
+  - An Isolation Forest model (trained on the normal behaviour, detects any anomalous behaviour). Its by design a little too sensitive to any anomalous behaviour, bringing in false positives but ensuring that no anomalies go missing. The false positives are handled for in the correlation layer. 
 
 
 

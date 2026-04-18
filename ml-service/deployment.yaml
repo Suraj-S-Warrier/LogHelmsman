@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ml-service
+  namespace: monitoring-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ml-service
+  template:
+    metadata:
+      labels:
+        app: ml-service
+    spec:
+      containers:
+        - name: ml-service
+          image: ml-service:v1
+          env:
+            - name: KAFKA_BROKER
+              value: "kafka.monitoring-system.svc.cluster.local:9092"
+            - name: PARSED_TOPIC
+              value: "parsed-logs"
+            - name: ALERTS_TOPIC
+              value: "alerts"
+            - name: MODEL_DIR
+              value: "/app/model"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ml-service
+  namespace: monitoring-system
+spec:
+  selector:
+    app: ml-service
+  ports:
+    - port: 8000
+      targetPort: 8000
+  type: ClusterIP
