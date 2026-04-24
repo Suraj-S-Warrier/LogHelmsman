@@ -74,6 +74,7 @@ class PodWindow:
         self.service   = service
         self.logs      = deque()   # (timestamp, is_error, message)
         self.last_restart_count  = 0
+        self.prev_restart_count  = 0
         self.prev_error_rate     = 0.0
         self.prev_log_volume     = 0
         self.lock = threading.Lock()
@@ -109,6 +110,9 @@ class PodWindow:
         self.prev_error_rate  = error_rate
         self.prev_log_volume  = log_volume
 
+        restart_delta = self.last_restart_count - self.prev_restart_count
+        self.prev_restart_count = self.last_restart_count
+
         return {
             "pod":               self.pod,
             "namespace":         self.namespace,
@@ -121,6 +125,8 @@ class PodWindow:
             "memory_mi":         mem_mi,
             "error_rate_delta":  error_rate_delta,
             "log_volume_delta":  log_volume_delta,
+            "restart_delta": restart_delta,
+            
         }
 
 # ── global pod windows ────────────────────────────────────────────────────────

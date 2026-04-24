@@ -88,7 +88,7 @@ ANOMALY_THRESHOLD = -0.05
 def predict(vector: FeatureVector):
     try:
         # extract features in correct order
-        values = [[getattr(vector, f) for f in FEATURES]]
+        values = [[getattr(vector, f) for f in FEATURES]]                                                                                                                                       
         scaled = scaler.transform(values)
 
         score     = float(model.decision_function(scaled)[0])

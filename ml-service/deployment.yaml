@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: ml-service
-          image: ml-service:v1
+          image: ml-service:v2
           env:
             - name: KAFKA_BROKER
               value: "kafka.monitoring-system.svc.cluster.local:9092"

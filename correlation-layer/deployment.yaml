@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: correlation-layer
-          image: correlation-layer:v1
+          image: correlation-layer:v5
           env:
             - name: KAFKA_BROKER
               value: "kafka.monitoring-system.svc.cluster.local:9092"
@@ -27,6 +27,20 @@ spec:
               value: "300"
             - name: MIN_ANOMALY_COUNT
               value: "2"
+            - name: CPU_SPIKE_THRESHOLD
+              value: "50"
+            - name: MEMORY_GROWTH_THRESHOLD
+              value: "70"
+            - name: LOG_SPIKE_THRESHOLD
+              value: "80"
+            - name: ERROR_SPIKE_THRESHOLD
+              value: "0.2"
+            - name: LOG_DROUGHT_THRESHOLD
+              value: "15"
+            - name: LOG_SPIKE_RECOVERY_THRESHOLD
+              value: "50"
+            - name: RESTART_SPIKE_THRESHOLD
+              value: "0"
           resources:
             requests:
               memory: "128Mi"

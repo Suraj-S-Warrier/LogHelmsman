@@ -17,6 +17,13 @@ OUTPUT_TOPIC      = os.environ.get("OUTPUT_TOPIC", "correlated-alerts")
 TAXONOMY_FILE     = os.environ.get("TAXONOMY_FILE", "/app/config/taxonomy.yaml")
 HISTORY_WINDOW    = int(os.environ.get("HISTORY_WINDOW", "300"))   # 5 min of alert history per pod
 MIN_ANOMALY_COUNT = int(os.environ.get("MIN_ANOMALY_COUNT", "2"))   # min alerts before correlating
+CPU_SPIKE_THRESHOLD = int(os.environ.get("CPU_SPIKE_THRESHOLD",50))
+MEMORY_GROWTH_THRESHOLD = int(os.environ.get("MEMORY_GROWTH_THRESHOLD",70))
+LOG_SPIKE_THRESHOLD = int(os.environ.get("LOG_SPIKE_THRESHOLD",80))
+ERROR_SPIKE_THRESHOLD = int(os.environ.get("ERROR_SPIKE_THRESHOLD",0.2))
+LOG_DROUGHT_THRESHOLD = int(os.environ.get("LOG_DROUGHT_THRESHOLD",15))
+LOG_SPIKE_RECOVERY_THRESHOLD = int(os.environ.get("LOG_SPIKE_RECOVERY_THRESHOLD",50))
+RESTART_SPIKE_THRESHOLD = int(os.environ.get("RESTART_SPIKE_THRESHOLD",0))
 
 # ── load failure taxonomy ─────────────────────────────────────────────────────
 def load_taxonomy():
@@ -42,19 +49,27 @@ def evict_old_history():
 
 # ── feature signal extractors ─────────────────────────────────────────────────
 def has_cpu_spike(alert):
-    return alert.get("features", {}).get("cpu_millicores", 0) > 50
+    return alert.get("features", {}).get("cpu_millicores", 0) > CPU_SPIKE_THRESHOLD
 
 def has_memory_growth(alert):
-    return alert.get("features", {}).get("memory_mi", 0) > 60
+    return alert.get("features", {}).get("memory_mi", 0) > MEMORY_GROWTH_THRESHOLD
 
 def has_log_spike(alert):
-    return alert.get("features", {}).get("log_volume_delta", 0) > 80
+    return alert.get("features", {}).get("log_volume_delta", 0) > LOG_SPIKE_THRESHOLD
 
 def has_error_spike(alert):
-    return alert.get("features", {}).get("error_rate", 0) > 0.2
+    return alert.get("features", {}).get("error_rate", 0) > ERROR_SPIKE_THRESHOLD
 
 def is_high_severity(alert):
     return alert.get("severity") in ("high", "medium")
+
+def has_log_drought(alert):
+    # log volume suddenly very low — pod likely crashed
+    return alert.get("features", {}).get("log_volume", 999) < LOG_DROUGHT_THRESHOLD
+
+def has_log_spike_recovery(alert):
+    # large positive delta after a drought — pod restarted
+    return alert.get("features", {}).get("log_volume_delta", 0) > LOG_SPIKE_RECOVERY_THRESHOLD
 
 # ── signal extractors map (used by taxonomy matching) ─────────────────────────
 SIGNAL_CHECKERS = {
@@ -62,8 +77,10 @@ SIGNAL_CHECKERS = {
     "memory_growth":  has_memory_growth,
     "log_spike":      has_log_spike,
     "error_spike":    has_error_spike,
-    "restart_spike":  lambda a: a.get("features", {}).get("restart_delta", 0) > 2,
+    "restart_spike":  lambda a: a.get("features", {}).get("restart_delta", 0) > RESTART_SPIKE_THRESHOLD,
     "high_severity":  is_high_severity,
+    "log_drought": has_log_drought,
+    "log_spike_recovery": has_log_spike_recovery
 }
 
 # ── classify failure based on taxonomy ───────────────────────────────────────

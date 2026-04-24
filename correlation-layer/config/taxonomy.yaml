@@ -1,5 +1,4 @@
 failure_classes:
-
   - name: crashloop_overload
     severity: critical
     conditions:
@@ -13,6 +12,27 @@ failure_classes:
       - memory_growth
       - high_severity
     description: "Gradual memory growth indicating a leak"
+
+  - name: pod_crash_restart
+    severity: high
+    conditions:
+      - log_drought
+      - high_severity
+    description: "Pod crash detected — log volume collapsed"
+
+  - name: crash_recovery
+    severity: medium
+    conditions:
+      - log_spike_recovery
+      - high_severity
+    description: "Pod recovering from crash — log volume spiking after restart"
+
+  - name: crashloop
+    severity: critical
+    conditions:
+      - restart_spike
+      - high_severity
+    description: "Pod restarting repeatedly — CrashLoopBackOff"
 
   - name: error_cascade
     severity: high
